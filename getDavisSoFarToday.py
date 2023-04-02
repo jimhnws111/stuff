@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[429]:
+# In[39]:
 
 
 import datetime
@@ -18,7 +18,7 @@ start = str(start)
 end = str(end)
 
 
-# In[430]:
+# In[40]:
 
 
 import collections
@@ -84,7 +84,6 @@ print(URLfinal)
 
 r =  requests.get(URLfinal)
 r.encoding = 'utf-8'
-print(r)
 
 r =  requests.get(URLfinal)
 data_dir_file = '/Users/jameshayes/davis.json' 
@@ -92,7 +91,7 @@ with open(data_dir_file, "w") as fd:
      json.dump(r.json(), fd)
 
 
-# In[431]:
+# In[41]:
 
 
 import collections
@@ -121,11 +120,13 @@ with open('/Users/jameshayes/testout.csv', 'w') as outfile:
         hi_temp = (d['temp_hi'])
         lo_temp = (d['temp_lo'])
         rainfall = (d['rainfall_in'])
-        print(f'{hi_temp},{lo_temp},{rainfall}', file = outfile)
+        time = (d['ts'])
+        date_time = datetime.fromtimestamp(time)
+        print(f'{hi_temp},{lo_temp},{rainfall},{date_time}', file = outfile)
         i += 1
 
 
-# In[432]:
+# In[42]:
 
 
 import pandas as pd
@@ -138,10 +139,10 @@ path_name = '/Users/jameshayes/'
 file_name = 'testout.csv'
 full_file = (f'{path_name}{file_name}')
 
-df = pd.read_csv(full_file, index_col=False,names=['temp_hi', 'temp_lo', 'rainfall'])
+df = pd.read_csv(full_file, index_col=False,names=['temp_hi', 'temp_lo', 'rainfall','time'])
 
 
-# In[433]:
+# In[43]:
 
 
 pd.set_option('display.max_rows', 1440)
@@ -165,14 +166,20 @@ minT = minT.strip()
 totR = df['rainfall'].sum()
 totR = round(totR,2)
 
+recentT = (df['time'].iloc[-1])
+print(recentT)
+datetime_obj = datetime.strptime(recentT, '%Y-%m-%d %H:%M:%S')
+lastTime = datetime_obj.strftime('%I:%M %p')
+
+
 # write the data to a csv file with an html suffix
 
 with open('/Users/jameshayes/Sites/HiLoRain.csv', 'w') as outfile:
-    print(f'{maxT},{minT},{totR}',file = outfile)
+    print(f'{maxT},{minT},{totR},{lastTime}',file = outfile)
  
 
 #Write to an HTML for display
-df1 = pd.read_csv('/Users/jameshayes/Sites/HiLoRain.csv', names = ['High','Low','Rainfall'], index_col = False)
+df1 = pd.read_csv('/Users/jameshayes/Sites/HiLoRain.csv', names = ['High','Low','Rainfall','Time'], index_col = False)
 pd.set_option('display.precision', 2)
 df1_style = df1.style.set_properties(**{"background-color": "lightblue",  
                            "color" : "black",
@@ -184,7 +191,7 @@ df1_style = df1.style.set_properties(**{"background-color": "lightblue",
 df1.to_html('/Users/jameshayes/Sites/SoFarTest.html', index = False)  
 
 
-# In[434]:
+# In[44]:
 
 
 import pandas as pd
@@ -200,7 +207,7 @@ df3_style.format({'Rainfall':"{:.2f}"})
 df3_style.to_html('/Users/jameshayes/Sites/new_test.html', index=False, justify ='center')
 
 
-# In[435]:
+# In[45]:
 
 
 # Clip out offending lines in the hmtl file created in the previous section
