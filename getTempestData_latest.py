@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[27]:
+# In[ ]:
 
 
 import json
@@ -9,50 +9,28 @@ import urllib
 import requests
 import csv
 import re
-
-
-# In[29]:
-
+import calcOneDay
+import getNameNumbers
 
 # Calculate the time and date for end of day calculations
 
-import datetime as datetime
-from datetime import time, timezone, timedelta
-
-now = (datetime.datetime.now(timezone.utc))
-year = now.strftime("%Y") 
-month = now.strftime("%m") 
-myMonth = now.strftime("%B")
-myYear = now.strftime("%Y")
-date = now.strftime("%d") 
-end_it = (f'{year},{month},{date},5,0')
-end = datetime.datetime.strptime(end_it, '%Y,%m,%d,%H,%M')
-end = int(round(end.timestamp()))
-
-current_day = datetime.datetime.now(timezone.utc)
-previous_day = datetime.datetime.now(timezone.utc) - datetime.timedelta(days = 1)
-prev_year = previous_day.strftime("%Y")
-prev_month = previous_day.strftime("%m")
-prev_date = previous_day.strftime("%d")
-start_it = (f'{prev_year},{prev_month},{prev_date},5,0')
-start = datetime.datetime.strptime(start_it, '%Y,%m,%d,%H,%M')
-start = int(round(start.timestamp()))
-print(start, end)
+xy = calcOneDay.calcOneDay()
+start, end = (xy[0], xy[1])
 
 
-# In[37]:
+# In[ ]:
 
+
+import datetime
+from datetime import datetime
+import dataFile
+import getNameNumbers
 
 #
 # Get data from the Tempest database for the new station
 #
 
 token = '877f6425-04a5-4f33-86e7-7123b7ef53d9'
-
-#
-# For the latest obs
-#
-
 protocol = 'https://'
 urlSiteDevice = 'swd.weatherflow.com/swd/rest/observations/device/'
 urlSiteStation = 'swd.weatherflow.com/swd/rest/observations/station/'
@@ -73,30 +51,32 @@ format1 = '&format=csv'
 goGetDeviceSummary = (f'{protocol}{urlSiteDevice}{deviceID}{preStart}{start_time}{preEnd}{end_time}{format1}{preToken}{token}')
 print(goGetDeviceSummary)
 r =  requests.get(goGetDeviceSummary)
+path = '/home/ec2-user/'
+file_name = 'tempest_temp.csv'
+full_file = f'{path}{file_name}'
 
-hold_file = '/home/ec2-user/test1.csv'
-with open(hold_file,'w') as fd:
+with open(full_file,'w') as fd:
      fd.write(r.text)
 
 
-# In[31]:
+# In[ ]:
 
 
 import pandas as pd
+import dataFile
+import getNameNumbers
+import sqlalchemy
+import mysql.connector
+import sqlite3
 
 #
 # Read in the CSV file for processing in pandas
 #
 
-path_name = '/home/ec2-user/'
-file_name = 'test1.csv'
-full_file = (f'{path_name}{file_name}')
-
+path = '/home/ec2-user/'
+file_name = 'tempest_temp.csv'
+full_file = f'{path}{file_name}'
 df = pd.read_csv(full_file, index_col=False)
-
-
-# In[32]:
-
 
 pd.set_option('display.max_rows', 1440)
 pd.set_option('display.max_columns', 35)
@@ -122,16 +102,51 @@ min_pres = (df.sort_values(by='pressure', ascending=True))
 min_P = min_pres.iloc[:1]
 minP = min_P['pressure'].values[0]
 
-max_pcpn = (df.sort_values(by='local_daily_precip', ascending=False))
-max_rain = max_pcpn.iloc[:1]
-maxR = max_rain['local_daily_precip'].values[0]
-maxR = round((maxR*0.03937), 2)
+cor_rain = (df.sort_values(by='local_daily_precip_final', ascending=False))
+corR_rain = cor_rain.iloc[:1]
+corR = corR_rain['local_daily_precip_final'].values[0]
+corR = round((corR*0.03937), 2)
 
 tot_rain = df['precip'].sum()
 totR = round((tot_rain*0.03937), 2)
+print(totR)
+
+strike_distance = (df.sort_values(by='strike_distance', ascending=False))
+lightning1 = (df['strike_distance'].between(1,8))
+lightning2 = (df['strike_distance'].between(9,16))
+
+df.insert(10,'lightning1',lightning1)
+df.insert(11,'lightning2',lightning2)
+
+#Determine if the strike distance is close enough to count as a thunderstorm
+x = len(df)
+a = 0
+
+while a < x:
+        if (df['lightning1'] == True).any():
+            q = "Yes"
+        else:
+            q = "No"
+        if (df['lightning2'] == True).any():   
+            r1 = "Yes"
+        else:
+            r1 = "No"
+        a += 1    
+  
+ 
+#strike_count = df['strike_count'].sum()
+
+#database_username = 'chuckwx'
+#database_password = 'jfr716!!00'
+#database_ip       = '3.135.162.69'
+#database_name     = 'tempestf6'
+#database_connection = sqlalchemy.create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.
+#                                               format(database_username, database_password, 
+#                                                      database_ip, database_name), connect_args={'connect_timeout': 30})
+#df.to_sql(con=database_connection, name='tempestF6', if_exists='replace')
 
 
-# In[36]:
+# In[ ]:
 
 
 #
@@ -140,27 +155,40 @@ totR = round((tot_rain*0.03937), 2)
 
 import openpyxl
 from openpyxl import load_workbook
+import datetime
+from datetime import datetime
+import excelFilename
+import calcTimeNow
+from calcTimeNow import calcTimeNow
+import getNameNumbers
 
 #
 # Create the month name for the xlsx filename
 #
 
-xls_filename = f'{myMonth}_{myYear}_Tempest'
-xls_suffix = '.xlsx'
-xls_fullfile = (f'{path_name}{xls_filename}{xls_suffix}')
+gg = getNameNumbers.tempest_ec2()
 
-wb = openpyxl.load_workbook(xls_fullfile)
+xls_filename, xls_fullname, path_name, date, thisYear, this_month = gg[0], gg[1], gg[2], gg[3], gg[4], gg[5]
+
+
+#sa1 = excelFilename.tempest_ec2()
+#xls_filename, path_name = (sa1[0], sa1[1])
+#xls_fullfile = (f'{path_name}{xls_filename}')
+#t1 = calcTimeNow()
+#now, myMonth, myYear, date = (t1[0], t1[1], t1[2], t1[3])
+
+wb = openpyxl.load_workbook(xls_fullname)
 sheet = wb.active
 
 # Write headers first...
 a1 = sheet['A1']
 a1.value = "Year"
 b1 = sheet['B1']
-b1.value = myYear
+b1.value = thisYear
 c1 = sheet['C1']
 c1.value = 'Month'
 d1 = sheet['D1']
-d1.value = myMonth
+d1.value = this_month
 
 a3 = sheet['A3']
 a3.value = "Date"
@@ -176,78 +204,48 @@ e3.value = "HDD"
 f3 = sheet['F3']
 f3.value = 'CDD'
 g3 = sheet['G3']
-g3.value = 'maxR'
+g3.value = 'totR'
 h3 = sheet['H3']
-h3.value = 'totR'
+h3.value = 'corR'
 
-k3 = sheet['K3']
-k3.value = "Highs >=90"
-k4 = sheet['K4']
-k4.value = "Highs <= 32"
-k5 = sheet['K5']
-k5.value = 'Lows <= 32'
-k6 = sheet['K6']
-k6.value = 'Lows <= 0'
+i3 = sheet['i3']
+i3.value = 'Lightning1_5'
+j3 = sheet['j3']
+j3.value = 'Lightning6_10'
 
-k13 = sheet['K13']
-k13.value = "Total Rainfall"
-k14 = sheet['K14']
-k14.value = "rain>=0.01"
-k15 = sheet['K15']
-k15.value = 'rain>=0.01'
-k16 = sheet['K16']
-k16.value = 'rain>=0.50'
-k17= sheet['K17']
-k17.value = 'rain>=1.00'
-k23 = sheet['K23']
-k23.value = 'Monthly Average'
-k24 = sheet['K24']
-k24.value = 'Departure'
+# Write the data..
 
-m3 = sheet['M3']
-m3.value = "High"
-m4 = sheet['M4']
-m4.value = "Low"
-m13 = sheet['M13']
-m13.value = "Max Rain"
-m23 = sheet['M23']
-m23.value = "Monthy Rainfall"
-m24 = sheet['M24']
-m24.value = "Departure"
-
-o3 = sheet['O3']
-o3.value = "Date"
-o4 = sheet['O4']
-o4.value = "Date"
-
-
-# Write the data...
+print(date)
 offset_day = (int(date) + 2)
 maxTT = sheet.cell(row = offset_day, column = 2)
 maxTT.value = maxT
 minTT = sheet.cell(row = offset_day, column = 3)
 minTT.value = minT
-maxRR = sheet.cell(row = offset_day, column = 7)
-maxRR.value = maxR
-totRR = sheet.cell(row = offset_day, column = 8)
+
+totRR = sheet.cell(row = offset_day, column = 7)
 totRR.value = totR
 
-wb.save(xls_fullfile)
+corRR = sheet.cell(row = offset_day, column = 8)
+corRR.value = corR
+
+lightning1 = sheet.cell(row = offset_day, column = 9)
+lightning1.value = q
+
+lightning2 = sheet.cell(row = offset_day, column = 10)
+lightning2.value = r1
+
+wb.save(xls_fullname)
 
 
-# In[35]:
+# In[ ]:
 
-
-import pandas as pd
 
 # Read the Excel file as a possible pandas dataframe and html file
 
-path_to_file = '/home/ec2-user/'
-html_path = '/var/www/html/'
-new_file = f'{path_to_file}{xls_filename}.xlsx'
+html_path = '/var/www/html/000/'
 
-df1 = pd.read_excel(new_file, skiprows = 2, names = ['Date','High','Low','Average','HDD','CDD','maxR','totR','dead1','dead2','dead3','dead4','dead5','dead6','dead7'])
-df1 = df1.drop(df1.columns[[8,9,10,11,12,13,14]], axis = 1)
-df1
-df1.to_html(f'{html_path}test.html', index = False) 
+df1 = pd.read_excel(xls_fullname, skiprows=2)
+print(df1)
+df2 = df1.drop(df1.columns[[10,11,12,13,14]], axis = 1)
+df2.to_html(f'{html_path}testTempest.html', index = False) 
 

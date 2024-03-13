@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WPC North American surface analysis zoom, pan, animation and archives</title>
+  <link rel="stylesheet" href="../../../leaflet/v1.0.3/leaflet.css">
+  <script src="../../../leaflet/v1.0.3/leaflet.js"></script>
+  <script type="text/javascript" language="javascript" src="CalendarPopup_sfc-zoom.js"></script>
+  <script type="text/javascript" language="javascript">document.write(getCalendarStyles());</script>
+  <script language="JavaScript" ID="jscal1xx">
+    var cal1xx = new CalendarPopup("calarea");
+    cal1xx.showNavigationDropdowns();
+  </script>
+</head>
+<body>
+
+<table id="row2" align="center" style="width:1200px">
+  <tr>
+    <td align="left">
+      <a id="sfcarch" style="font-size:80%" href="/archives/web_pages/sfc/sfc_archive.php">WPC Surface Archive Page</a>
+    </td>
+    <td align="center">
+      <b><span id="currmap" style="margin:0px; font-size:25px" title="click on the entry box on the right to change the date"></span></b>
+    </td>
+    <td align="right">
+      <form name="sfcdate" style="display:inline;" action="">
+        <div id="calarea" style="position:absolute; visibility:hidden; background-color:white; layer-background-color:white; z-index:2"></div>
+          <input id="inputdate" name="inputdate" title="Click inside entry box to open calendar and select a date of your choice.  At present, maps from January 1986 through December 2006 are available in this archive.  More maps from earlier years will be added later."
+                 type="text" size="10" value="Calendar" style="text-align: center" 
+                 onclick="cal1xx.select(document.forms['sfcdate'].inputdate,'anchor9xx','MM/dd/yyyy')">
+          <a href="#" onclick="cal1xx.select(document.forms['sfcdate'].inputdate,'anchor9xx','MM/dd/yyyy');" name="anchor9xx" id="anchor9xx"></a>
+      </form>
+    </td>
+  </tr>
+  <tr>
+    <td id="upperleft" align="left" style="width:135px">
+      <select id="bkgmap" OnChange="backgroundmap()">
+        <option value='white'>off white</option>
+        <option value='color'>green/blue</option>
+        <option value='topo'>topography</option>
+        <option value='hires' selected>Hi-res topo</option>
+      </select>
+    </td>
+    <td align="center">
+      <input type="button" title="last year" style="font-weight:bold; width:45px" id="ly" value="-1y" OnClick="getmap(-365)">
+      <input type="button" title="last month" style="font-weight:bold; width:45px" id="lm" value="-1m" OnClick="getmap(-30)">
+      <input type="button" title="last week" style="font-weight:bold; width:45px" id="lw" value="-1w" OnClick="getmap(-168)">
+      <input type="button" title="yesterday" style="font-weight:bold; width:45px" id="ld" value="-1d" OnClick="getmap(-24)">
+      <input type="button" style="font-weight:bold" id="LM" value="prev map" OnClick="getmap(-3)">
+      <input type="button" style="font-weight:bold; margin:0 8px 0 8px; display:none" id="latest" value="latest" OnClick="getlatest()">
+      <input type="button" style="font-weight:bold" id="NM" value="next map" OnClick="getmap(3)">
+      <input type="button" title="next day" style="font-weight:bold; width:45px" id="nd" value="+1d" OnClick="getmap(24)">
+      <input type="button" title="next week" style="font-weight:bold; width:45px" id="nw" value="+1w" OnClick="getmap(168)">
+      <input type="button" title="next month" style="font-weight:bold; width:45px" id="nm" value="+1m" OnClick="getmap(30)">
+      <input type="button" title="next year" style="font-weight:bold; width:45px" id="ny" value="+1y" OnClick="getmap(365)"><br>
+    </td>
+    <td id="upperright" align="right" style="width:135px">
+      <span id="wintxt" style="margin:0px; valign:center; font-family:'Arial'; font-size:80%"></span>
+      <select id="winsiz" OnChange="winsiz()">
+        <option value='Fill' selected>Fill</option>
+        <option value='XS'>XS</option>
+        <option value='S'>S</option>
+        <option value='M'>M</option>
+        <option value='M+'>M+</option>
+        <option value='L'>L</option>
+        <option value='XL'>XL</option>
+        <option value='Full'>Full</option>
+      </select>
+    </td>
+  </tr>
+</table>
+
+<table border="1" align="center">
+  <caption id="note" style="text-align: left; caption-side: bottom;"></caption>
+  <tr>
+    <td id="sfctd" width="1200" height="900" valign="top">
+      <div id="sfcdiv" border="1" align="center">
+      </div>
+    </td>
+  </tr>
+</table>
+<p>This webpage allows you to view the full archive of North American surface analyses issued by NMC/HPC from January 1986 through December 2006 (with occasional gaps) where you can conveniently pan, zoom in and out, as well as step through successive maps with relative ease.  This archive will be expanded in the future to include maps from earlier years.  You can find more explanations on the various control buttons on this page by hovering the cursor over them.</p>
+
+<script>
+// Set global variables for the date of the last available colored surface analysis
+  yl = "2006";
+  ml = "12";
+  dl = "31";
+  hl = "21";
+
+  mdl = new Date(yl,ml-1,dl,hl);
+
+// Set global variables for the date of the analysis to be displayed
+  y0 = "1993";
+  m0 = "03";
+  d0 = "13";
+  h0 = "12";
+  mmm = "";
+  ds = "";
+
+  md0 = new Date(y0,m0-1,d0,h0);
+
+// Set date of the earliest available analysis to 00Z Jan 1, 1978
+  md00 = new Date(1978,0,1,0);
+
+// set window size
+  windowsize = getCookie("winsiz");
+  if ( windowsize == "" ) {
+    var windowsize = document.getElementById('winsiz').options[document.getElementById('winsiz').selectedIndex].value
+  } else {
+    for (var i=0; i < document.getElementById('winsiz').options.length; i++) {
+      if (document.getElementById('winsiz').options[i].value == windowsize)
+        document.getElementById('winsiz').selectedIndex = i;
+    }
+  }
+
+// set background map
+  var bkgmap = document.getElementById('bkgmap').options[document.getElementById('bkgmap').selectedIndex].value;
+
+// set zoom level
+  var zoomlevel = getCookie("zoomlevel");
+  if ( windowsize == "Full" || windowsize == "" || zoomlevel == "" ) { zoomlevel = "2" }
+
+// set map position
+  lat = getCookie("lat");
+  lon = getCookie("lon");
+  if ( lat == "" && lon == "" ) {
+    lat = -165; lon = 185
+  } else {Number(lat);
+    lat = Number(lat);
+    lon = Number(lon);
+  }
+
+// create the slippy map
+  var map = L.map("sfcdiv", {
+    minZoom: 1,
+    maxZoom: 4,
+    center: [lat, lon],
+    zoom: zoomlevel,
+    crs: L.CRS.Simple
+  });
+
+// dimensions of the surface analysis map
+  var w = 2995,
+      h = 2212,
+      url = "../../sfc/" + y0 + "/sfc" + y0 + m0 + d0 + h0 + "z.gif";
+
+// calculate the edges of the map, in coordinate space
+  var southWest = map.unproject([0, h], map.getMaxZoom()-1);
+  var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
+  var bounds = new L.LatLngBounds(southWest, northEast);
+
+// add the background map
+  bkgmap = L.imageOverlay("NAmap-topo.gif", bounds);
+  map.addLayer(bkgmap);
+
+// add the image overlay so that it covers the entire map
+  sfcmap = L.imageOverlay(url, bounds);
+  map.addLayer(sfcmap);
+
+// tell leaflet that the map is exactly as big as the window
+  map.setMaxBounds(bounds);
+
+// initialize arrays to store 3-letter weekdays and months
+  var weekday = new Array();
+  weekday[0] = "Sun"; weekday[1] = "Mon"; weekday[2] = "Tue"; weekday[3] = "Wed";
+  weekday[4] = "Thu"; weekday[5] = "Fri"; weekday[6] = "Sat";
+
+  var month = new Array();
+  month[0] = "January"; month[1] = "February"; month[2] = "March"; month[3] = "April"; month[4] = "May"; month[5] = "June";
+  month[6] = "July"; month[7] = "August"; month[8] = "September"; month[9] = "October"; month[10] = "November"; month[11] = "December";
+
+// Function to advance the time by nhr hours or days
+function getmap(nhr) {
+  y = Number(y0);
+  m = Number(m0) - 1;
+  d = Number(d0);
+  h = Number(h0);
+
+  md = new Date(y,m,d,h);
+  if ( nhr == 30 || nhr == -30 ) {
+    md.setMonth(md.getMonth() + nhr/Math.abs(nhr) );
+  } else if ( nhr == 365 || nhr == -365 ) {
+    md.setFullYear(md.getFullYear() + nhr/Math.abs(nhr) );
+  } else {    
+    md.setHours(md.getHours() + nhr);
+  }
+
+  yyyy = md.getFullYear() + "";
+  mm = md.getMonth() + 1 + "";
+    if (mm.length == 1) { mm = "0" + mm; }
+  mmm = month[md.getMonth()];
+  ds  = md.getDate() + "";
+  dd = md.getDate() + "";
+    if (dd.length == 1) { dd = "0" + dd; }
+  dow = weekday[md.getDay()];
+  hh = md.getHours() + "";
+    if (hh.length == 1) { hh = "0" + hh; }
+
+  document.getElementById("currmap").innerHTML = "Surface analysis " + hh + "Z " + dow + " " + mmm + " " + ds + ", " + yyyy;
+
+  y0 = yyyy;
+  m0 = mm;
+  d0 = dd;
+  h0 = hh;
+
+  url = "../../sfc/" + y0 + "/sfc" + y0 + m0 + d0 + h0 + "z.gif";
+
+  sfcmap.setUrl(url)
+
+// Keep +1y +1m +1w +1d, and "next map" buttons from jumping beyond the time of the latest analysis
+  md1 = new Date(y0,m0-1,d0,h0);
+  md1.setHours(md1.getHours() + 3);
+  md2 = new Date(y0,m0-1,d0,h0);
+  md2.setHours(md2.getHours() + 24);
+  md3 = new Date(y0,m0-1,d0,h0);
+  md3.setHours(md3.getHours() + 168);
+  md4 = new Date(y0,m0-1,d0,h0);
+  md4.setMonth(md4.getMonth() + 1)
+  md5 = new Date(y0,m0-1,d0,h0);
+  md5.setFullYear(md5.getFullYear() + 1);
+
+  if ( md1 > mdl ) {
+    document.getElementById("NM").disabled = true;
+    document.getElementById("nd").disabled = true;
+    document.getElementById("nw").disabled = true;
+    document.getElementById("nm").disabled = true;
+    document.getElementById("ny").disabled = true;
+  } else if ( md2 > mdl ) {
+    document.getElementById("NM").disabled = false;
+    document.getElementById("nd").disabled = true;
+    document.getElementById("nw").disabled = true;
+    document.getElementById("nm").disabled = true;
+    document.getElementById("ny").disabled = true;
+  } else if ( md3 > mdl ) {
+    document.getElementById("NM").disabled = false;
+    document.getElementById("nd").disabled = false;
+    document.getElementById("nw").disabled = true;
+    document.getElementById("nm").disabled = true;
+    document.getElementById("ny").disabled = true;
+  } else if ( md4 > mdl ) {
+    document.getElementById("NM").disabled = false;
+    document.getElementById("nd").disabled = false;
+    document.getElementById("nw").disabled = false;
+    document.getElementById("nm").disabled = true;
+    document.getElementById("ny").disabled = true;
+  } else if ( md5 > mdl ) {
+    document.getElementById("NM").disabled = false;
+    document.getElementById("nd").disabled = false;
+    document.getElementById("nw").disabled = false;
+    document.getElementById("nm").disabled = false;
+    document.getElementById("ny").disabled = true;
+  } else {
+    document.getElementById("NM").disabled = false;
+    document.getElementById("nd").disabled = false;
+    document.getElementById("nw").disabled = false;
+    document.getElementById("nm").disabled = false;
+    document.getElementById("ny").disabled = false;
+  }
+
+// Keep -1y -1m -1w -1d, and "prev map" buttons from stepping the time before 00Z May 1 2005 
+  md1 = new Date(y0,m0-1,d0,h0);
+  md1.setHours(md1.getHours() - 3);
+  md2 = new Date(y0,m0-1,d0,h0);
+  md2.setHours(md2.getHours() - 24);
+  md3 = new Date(y0,m0-1,d0,h0);
+  md3.setHours(md3.getHours() - 168);
+  md4 = new Date(y0,m0-1,d0,h0);
+  md4.setMonth(md4.getMonth() - 1)
+  md5 = new Date(y0,m0-1,d0,h0);
+  md5.setFullYear(md5.getFullYear() - 1);
+
+  if ( md1 < md00 ) {
+    document.getElementById("LM").disabled = true;
+    document.getElementById("ld").disabled = true;
+    document.getElementById("lw").disabled = true;
+    document.getElementById("lm").disabled = true;
+    document.getElementById("ly").disabled = true;
+  } else if ( md2 < md00 ) {
+    document.getElementById("LM").disabled = false;
+    document.getElementById("ld").disabled = true;
+    document.getElementById("lw").disabled = true;
+    document.getElementById("lm").disabled = true;
+    document.getElementById("ly").disabled = true;
+  } else if ( md3 < md00 ) {
+    document.getElementById("LM").disabled = false;
+    document.getElementById("ld").disabled = false;
+    document.getElementById("lw").disabled = true;
+    document.getElementById("lm").disabled = true;
+    document.getElementById("ly").disabled = true;
+  } else if ( md4 < md00 ) {
+    document.getElementById("LM").disabled = false;
+    document.getElementById("ld").disabled = false;
+    document.getElementById("lw").disabled = false;
+    document.getElementById("lm").disabled = true;
+    document.getElementById("ly").disabled = true;
+  } else if ( md5 < md00 ) {
+    document.getElementById("LM").disabled = false;
+    document.getElementById("ld").disabled = false;
+    document.getElementById("lw").disabled = false;
+    document.getElementById("lm").disabled = false;
+    document.getElementById("ly").disabled = true;
+  } else {
+    document.getElementById("LM").disabled = false;
+    document.getElementById("ld").disabled = false;
+    document.getElementById("lw").disabled = false;
+    document.getElementById("lm").disabled = false;
+    document.getElementById("ly").disabled = false;
+  }
+
+  document.getElementById("latest").disabled = false;
+}
+
+function winsiz() {
+  var size = document.getElementById("winsiz").value;
+  if ( size == "Fill" ) {
+    x = window.innerWidth - 75;
+    y = window.innerHeight - 125;
+    document.getElementById("sfctd").width = x;
+    document.getElementById("sfctd").height = y;
+    document.getElementById("sfcdiv").style.width = x + "px";
+    document.getElementById("sfcdiv").style.height = y + "px";
+    document.getElementById("row2").style.width = x + "px";
+    if ( x < 1000 ) {
+      document.getElementById("upperleft").style.width = "100px";
+      document.getElementById("upperright").style.width = "100px";
+      document.getElementById("wintxt").innerHTML = "";
+      document.getElementById("sfcarch").innerHTML = "Archive Page"
+    } else {
+      document.getElementById("upperleft").style.width = "200px";
+      document.getElementById("upperright").style.width = "200px";
+      document.getElementById("wintxt").innerHTML = "Window size:"
+      document.getElementById("sfcarch").innerHTML = "WPC Surface Archive Page"
+    }
+    if ( x < 1000 ) {
+      document.getElementById('ly').style.display = "none";
+      document.getElementById('ny').style.display = "none";
+      document.getElementById('lm').style.display = "none";
+      document.getElementById('nm').style.display = "none";
+      document.getElementById('lw').style.display = "none";
+      document.getElementById('nw').style.display = "none"
+    } else {
+      document.getElementById('ly').style.display = "inline";
+      document.getElementById('ny').style.display = "inline";
+      document.getElementById('lm').style.display = "inline";
+      document.getElementById('nm').style.display = "inline";
+      document.getElementById('lw').style.display = "inline";
+      document.getElementById('nw').style.display = "inline"
+    }
+  } else if ( size == "XS" ) {
+    document.getElementById("sfctd").width = "950";
+    document.getElementById("sfctd").height = "550";
+    document.getElementById("sfcdiv").style.width = "950px";
+    document.getElementById("sfcdiv").style.height = "550px"
+    document.getElementById("row2").style.width = "950px";
+    document.getElementById("wintxt").innerHTML = "";
+    document.getElementById("upperleft").style.width = "100px";
+    document.getElementById("upperright").style.width = "100px";
+    document.getElementById("sfcarch").innerHTML = "Archive Page";
+  } else if ( size == "S" ) {
+    document.getElementById("sfcdiv").style.width = "1000px";
+    document.getElementById("sfcdiv").style.height = "600px";
+    document.getElementById("sfctd").width = "1000";
+    document.getElementById("sfctd").height = "600";
+    document.getElementById("row2").style.width = "1000px";
+    document.getElementById("wintxt").innerHTML = "";
+    document.getElementById("upperleft").style.width = "100px";
+    document.getElementById("upperright").style.width = "100px";
+    document.getElementById("sfcarch").innerHTML = "Archive Page";
+  } else if ( size == "M" ) {
+    document.getElementById("sfcdiv").style.width = "1200px";
+    document.getElementById("sfcdiv").style.height = "675px";
+    document.getElementById("sfctd").width = "1200";
+    document.getElementById("sfctd").height = "675";
+    document.getElementById("row2").style.width = "1200px";
+    document.getElementById("wintxt").innerHTML = "Window size:";
+    document.getElementById("upperleft").style.width = "200px";
+    document.getElementById("upperright").style.width = "200px";
+    document.getElementById("sfcarch").innerHTML = "WPC Surface Archive Page";
+  } else if ( size == "M+" ) {
+    document.getElementById("sfcdiv").style.width = "1200px";
+    document.getElementById("sfcdiv").style.height = "800px";
+    document.getElementById("sfctd").width = "1200";
+    document.getElementById("sfctd").height = "800";
+    document.getElementById("row2").style.width = "1200px";
+    document.getElementById("wintxt").innerHTML = "Window size:";
+    document.getElementById("upperleft").style.width = "200px";
+    document.getElementById("upperright").style.width = "200px";
+    document.getElementById("sfcarch").innerHTML = "WPC Surface Archive Page";
+  } else if ( size == "L" ) {
+    document.getElementById("sfcdiv").style.width = "1200px";
+    document.getElementById("sfcdiv").style.height = "900px";
+    document.getElementById("sfctd").width = "1200";
+    document.getElementById("sfctd").height = "900";
+    document.getElementById("row2").style.width = "1200px";
+    document.getElementById("wintxt").innerHTML = "Window size:";
+    document.getElementById("upperleft").style.width = "200px";
+    document.getElementById("upperright").style.width = "200px";
+    document.getElementById("sfcarch").innerHTML = "WPC Surface Archive Page";
+  } else if ( size == "XL" ) {
+    document.getElementById("sfcdiv").style.width = "1500px";
+    document.getElementById("sfcdiv").style.height = "1200px";
+    document.getElementById("sfctd").width = "1500";
+    document.getElementById("sfctd").height = "1200";
+    document.getElementById("row2").style.width = "1500px";
+    document.getElementById("wintxt").innerHTML = "Window size:";
+    document.getElementById("upperleft").style.width = "200px";
+    document.getElementById("upperright").style.width = "200px";
+    document.getElementById("sfcarch").innerHTML = "WPC Surface Archive Page";
+  } else if ( size == "Full" ) {
+    document.getElementById("sfcdiv").style.width = "4000px";
+    document.getElementById("sfcdiv").style.height = "3000px";
+    document.getElementById("sfctd").width = "4000";
+    document.getElementById("sfctd").height = "3000";
+    document.getElementById("row2").style.width = "4000px";
+    document.getElementById("wintxt").innerHTML = "Window size:";
+    document.getElementById("upperleft").style.width = "200px";
+    document.getElementById("upperright").style.width = "200px";
+    document.getElementById("sfcarch").innerHTML = "WPC Surface Archive Page";
+    zoomlevel = "1";
+  }
+  if ( map != null ) map.invalidateSize()
+}
+
+function changedate(nd) {
+  y0 = nd.getFullYear() + "";
+  m0 = nd.getMonth() + 1 + "";
+  d0 = nd.getDate() + "";
+
+  mdn = new Date(y0,m0-1,d0,h0);
+  if ( mdn > mdl ) {
+    getlatest()
+  } else {
+    chgmapcolor()
+  }
+}
+
+function showdate(ans) {
+  if ( ans == "y" ) {
+    document.getElementById('inputdate').value = m0 + "/" + d0 + "/" + y0;
+  } else {
+    document.getElementById('inputdate').value = "Calendar";
+  }
+}
+
+function chgmapcolor() {
+  document.getElementById("note").innerHTML = "";
+  document.getElementById("inputdate").style = "display:visible; text-align:center; background-color: #CECEF6"
+  getmap(0)
+}
+
+function backgroundmap() {
+  var map0 = document.getElementById("bkgmap").value;
+  if ( map0 == "white" ) {
+    background = "white-bkg.gif"
+  }
+  if ( map0 == "color" ) {
+    background = "NAmap.png"
+  }
+  if ( map0 == "topo" ) {
+    background = "NAmap-topo.png"
+  }
+  if ( map0 == "hires" ) {
+    background = "NAtopo-30s.GIF"
+  }
+  bkgmap.setUrl(background)
+}
+
+function getlatest() {
+  s = map.getCenter().toString();
+    lonlat = s.substring(7,s.length-1).split(',');
+    lat = lonlat[0];
+    lon = lonlat[1];
+  document.cookie = "lat=" + lat;
+  document.cookie = "lon=" + lon;
+
+  zoomlevel = map.getZoom();
+  document.cookie = "zoomlevel=" + zoomlevel;
+
+  winsiz = document.getElementById('winsiz').value;
+  document.cookie = "winsiz=" + winsiz;
+  location.href = "sfc-zoom.html"
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+function imageExists(url, callback) {
+  var img = new Image();
+  img.onload = function() { callback(true) };
+  img.onerror = function() { callback(false) };
+  img.src = url;
+}
+
+// Display the surface analysis
+  document.innerHTML = chgmapcolor();
+  document.innerHTML = winsiz();
+  document.innerHTML = backgroundmap()
+</script>
+
+<!-- Author: WPC KY Kong -->
+</body>
+</html>

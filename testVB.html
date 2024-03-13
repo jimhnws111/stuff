@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="Chrome"> 
+<% @Language = "VBScript" %>
+<% dim index, strSelect
+strSelect = Trim(Request.QueryString("Selection"))
+if strSelect = "" then
+	index = Trim(Request.QueryString("counter"))
+elseif strSelect = "Previous" then
+	index = Trim(Request.QueryString("counter"))
+	if index > 1 then
+		index = index - 1
+	else
+		index = 40
+	end if
+elseif strSelect = "Next" then
+	index = Trim(Request.QueryString("counter"))
+	if index < 40 then
+		index = index + 1
+	else
+		index = 1
+	end if
+end if 
+if index = "" then
+	index = 1
+end if %>
+<html><head><title>Angel Stadium - Anaheim - June 10, 2006</title>
+</head><body><form>Picture #<input type="text" size=2 name="counter" value= <%= index %> > (of 40)
+<input type="submit" name="Selection" value="Previous">
+<input type="submit" name="Selection" value="Next"><br>
+<img src="/images/Anaheim_6_10_06/AngelStadium_<%= index %>.jpg"></form>
+</body></html>

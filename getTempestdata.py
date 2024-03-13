@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[160]:
+# In[1]:
 
 
 import json
@@ -11,7 +11,7 @@ import csv
 import re
 
 
-# In[241]:
+# In[2]:
 
 
 #import datetime as datetime
@@ -24,7 +24,7 @@ import re
 #print(start,end)
 
 
-# In[256]:
+# In[3]:
 
 
 # Calculate the time and date for end of day calculations
@@ -51,7 +51,7 @@ start = int(round(start.timestamp()))
 print(start, end)
 
 
-# In[257]:
+# In[4]:
 
 
 #
@@ -88,7 +88,7 @@ with open('/Users/jameshayes/test1.csv','w') as fd:
      fd.write(r.text)
 
 
-# In[258]:
+# In[5]:
 
 
 import pandas as pd
@@ -104,7 +104,7 @@ full_file = (f'{path_name}{file_name}')
 df = pd.read_csv(full_file, index_col=False)
 
 
-# In[305]:
+# In[6]:
 
 
 pd.set_option('display.max_rows', 1440)
@@ -141,7 +141,7 @@ totR = round((tot_rain*0.03937), 2)
 print(maxT,minT,maxR,totR)
 
 
-# In[306]:
+# In[7]:
 
 
 # Write a test file with the high low and pcpn info
@@ -151,7 +151,7 @@ with open('/Users/jameshayes/testoutput.txt','w') as fd:
      fd.write(dayOutput)
 
 
-# In[313]:
+# In[8]:
 
 
 #
@@ -235,10 +235,11 @@ o3 = sheet['O3']
 o3.value = "Date"
 o4 = sheet['O4']
 o4.value = "Date"
-
+print(date)
 
 # Write the data...
-offset_day = (int(date) + 3)
+offset_day = (int(date) + 2)
+print(offset_day)
 maxTT = sheet.cell(row = offset_day, column = 2)
 maxTT.value = maxT
 minTT = sheet.cell(row = offset_day, column = 3)
@@ -249,6 +250,24 @@ totRR = sheet.cell(row = offset_day, column = 8)
 totRR.value = totR
 
 wb.save(xls_fullfile)
+
+
+# In[15]:
+
+
+import pandas as pd
+
+# Read the Excel file as a possible pandas dataframe and html file
+
+path_to_file = '/Users/jameshayes/'
+xls_file = 'January_2023_Tempest.xlsx'
+new_file = f'{path_to_file}{xls_file}'
+print(new_file)
+
+df1 = pd.read_excel(new_file, skiprows = 2, names = ['Date','High','Low','Average','HDD','CDD','maxR','totR','dead1','dead2','dead3','dead4','dead5','dead6','dead7'])
+df1 = df1.drop(df1.columns[[8,9,10,11,12,13,14]], axis = 1)
+print(df1)
+df1.to_html(f'{path_to_file}test.html', index=False) 
 
 
 # In[ ]:
