@@ -29,7 +29,7 @@ def timesAndDates():
     if isDST == 1:
         now = datetime.now()
         end = int(datetime.timestamp(now))
-        start = (end - 55800)
+        start = (end - 59400)
         start = str(start)
         end = str(end)
         

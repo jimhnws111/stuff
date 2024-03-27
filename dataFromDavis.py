@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[5]:
 
 
 import collections
@@ -23,26 +23,27 @@ now = datetime.now()
 x = now.strftime("%Y-%m-%d")
 print("This script started at:", now)
 
-t1 = ' 20:00'
-t2 = ' 21:00'
+t1 = ' 22:00'
+t2 = ' 23:00'
 time1 = x + t1
 time2 = x + t2
 val1 = datetime.strptime(time1, "%Y-%m-%d %H:%M")
 val2 = datetime.strptime(time2, "%Y-%m-%d %H:%M")
+print(val1, val2)
 
 if val1 < now < val2:
     end = int(datetime.timestamp(now))
-    start = (end - 55800)
+    start = (end - 59400)
     start = str(start)
-    end = str(end)    
+    end = str(end) 
+    print("Chose this one")
         
 else:
     startEnd = getData.getData()
     start, end = startEnd[0], startEnd[1]   
+    print("Nope. Chose this one")
     
 print(start, end)    
-
-
 
 def dataFromDavis():
     parameters = {
