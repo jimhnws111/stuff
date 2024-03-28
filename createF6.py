@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[90]:
+# In[94]:
 
 
 import pandas as pd
@@ -44,10 +44,4 @@ def createF6(df):
         cdd = 0          
  
     return(maxT, minT, dewMaxT, dewMinT, rain, avgTemp, hdd, cdd)
-
-
-# In[ ]:
-
-
-
 

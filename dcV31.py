@@ -253,7 +253,7 @@ def tableWrite(df2):
     database_connection = sqlalchemy.create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.
                                                    format(database_username, database_password, 
                                                           database_ip, database_name), connect_args={'connect_timeout': 30})
-    df2.to_sql(con=database_connection, name='davisV3', if_exists='append', index = False)
+    df2.to_sql(con=database_connection, name='davisUpdate', if_exists='append', index = False)
 
 df2 = arrangeAndWrite()    
 tableWrite(df2)
@@ -411,7 +411,7 @@ def gatherData():
 gatherData()   
 
 
-# In[99]:
+# In[103]:
 
 
 import pymysql as dbapi
@@ -490,4 +490,10 @@ def almanac():
             print(rainPhrase, file = outfile1)  
             
 almanac()            
+
+
+# In[ ]:
+
+
+
 

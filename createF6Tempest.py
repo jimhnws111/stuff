@@ -13,8 +13,8 @@ def createF6Tempest():
     
     """Read in data from text file and create needed F6 data"""
 
-    df = pd.read_csv('/home/ec2-user/tempest_temp.csv', index_col=False)
-    #df = pd.read_csv('/Users/jameshayes/tempest_temp.csv', index_col=False)
+    #df = pd.read_csv('/home/ec2-user/tempest_temp.csv', index_col=False)
+    df = pd.read_csv('/Users/jameshayes/tempest_temp.csv', index_col=False)
 
     #
     # Calculate needed F6 data

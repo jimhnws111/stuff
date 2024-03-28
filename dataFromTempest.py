@@ -63,8 +63,8 @@ def dataFromTempest():
     goGetDeviceSummary = (f'{protocol}{urlSiteDevice}{deviceID}{preStart}{start_time}{preEnd}{end_time}{format1}{preToken}{token}')
     r =  requests.get(goGetDeviceSummary)
 
-    path = '/home/ec2-user/'
-    #path = '/Users/jameshayes/'
+    #path = '/home/ec2-user/'
+    path = '/Users/jameshayes/'
     file_name = 'tempest_temp.csv'
     full_file = f'{path}{file_name}'
 
