@@ -14,40 +14,20 @@ import json
 import dataFile
 import getData
 import checkDST
-
-#
-# Get the start and end times, depending on product
-#
-
-now = datetime.now()
-x = now.strftime("%Y-%m-%d")
-print("This script started at:", now)
-
-t1 = ' 17:30'
-t2 = ' 18:30'
-time1 = x + t1
-time2 = x + t2
-val1 = datetime.strptime(time1, "%Y-%m-%d %H:%M")
-val2 = datetime.strptime(time2, "%Y-%m-%d %H:%M")
-print(val1, val2)
-
-if val1 < now < val2:
-    end = int(datetime.timestamp(now))
-    start = (end - 59400)
-    start = str(start)
-    end = str(end) 
-            
-else:
-    startEnd = getData.getData()
-    start, end = startEnd[0], startEnd[1] 
-    start = str(start)
-    end = str(end) 
+import getStartEnd
 
 #
 # Start the module
 #
 
 def dataFromDavis1():
+    
+    import getStartEnd
+    startEnd = getStartEnd.getStartEnd()
+    start, end = startEnd[0], startEnd[1]
+ 
+    print(start, end)    
+    
     parameters = {
       "api-key": "vy8jbrjsxlbwgojepq3vfyfqfywyhvbd", 
       "api-secret": "sdqfm6wdfy9w0pqp2vdka38o6b4vcsvc",

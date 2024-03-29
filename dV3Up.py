@@ -40,24 +40,7 @@ import pytz
 def timesAndDates():
     
     """Calculate the time and date for end of day calculations
-    First determine whether we are in DST or not"""
-
-    # Check DST setting
-    isDST = checkDST.checkDST()
-    
-    if isDST == 1:
-        now = datetime.now()
-        end = int(datetime.timestamp(now))
-        start = (end - 59400)
-        start = str(start)
-        end = str(end)
-                
-    else:
-        now = datetime.now()
-        end = int(datetime.timestamp(now))
-        start = (end - 59400)
-        start = str(start)
-        end = str(end)    
+    First determine whether we are in DST or not"""   
 
     dayInfo = daysAndDatesNew.daysAndDatesNew()
     month, month_num, date, year = dayInfo[0], dayInfo[1], dayInfo[2], dayInfo[3]
@@ -66,9 +49,7 @@ def timesAndDates():
     month_num = int(month_num)
     date = int(date)
                                
-    return(start, end, month, month_num, date, year, yesterday, nextDay) 
-
-timesAndDates()
+    return(month, month_num, date, year, yesterday, nextDay) 
 
 
 # In[157]:
@@ -86,38 +67,17 @@ import getData
 import checkDST
 
 #
-# Get the start and end times, depending on product
-#
-
-now = datetime.now()
-x = now.strftime("%Y-%m-%d")
-print("This script started at:", now)
-
-t1 = ' 20:00'
-t2 = ' 21:00'
-time1 = x + t1
-time2 = x + t2
-val1 = datetime.strptime(time1, "%Y-%m-%d %H:%M")
-val2 = datetime.strptime(time2, "%Y-%m-%d %H:%M")
-print(val1, val2)
-
-if val1 < now < val2:
-    end = int(datetime.timestamp(now))
-    start = (end - 59400)
-    start = str(start)
-    end = str(end) 
-            
-else:
-    startEnd = getData.getData()
-    start, end = startEnd[0], startEnd[1] 
-    start = str(start)
-    end = str(end) 
-
-#
 # Start the module
 #
 
 def dataFromDavis1():
+    
+    startEnd = getStartEnd.getStartEnd()
+    start, end = startEnd[0], startEnd[1]
+ 
+    print(start, end)    
+    
+    
     parameters = {
       "api-key": "vy8jbrjsxlbwgojepq3vfyfqfywyhvbd", 
       "api-secret": "sdqfm6wdfy9w0pqp2vdka38o6b4vcsvc",
@@ -168,8 +128,6 @@ def dataFromDavis1():
     
     return(davisAPI)
 
-dataFromDavis1()
-
 
 # In[159]:
 
@@ -211,8 +169,6 @@ def getAndStore():
     
     
     return(df)
-
-getAndStore()
 
 #
 # Calculate more variables from the dataFrame
@@ -294,7 +250,7 @@ highPhrase = highData[2]
 lowPhrase = lowData[2]
 rainPhrase = rainData[2]
 
-filePath = '/var/www/html/000//home/ec2-user/needSQL/createF6.py'
+filePath = '/var/www/html/000/climoDavis999.txt'
 #filePath = '/Users/jameshayes/Sites/climoDavis999.txt'
 
 def almanac():

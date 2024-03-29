@@ -308,7 +308,7 @@ def createHTMLTables():
 
     html_table_blue_light = build_table(df3, 'blue_light', text_align='center', font_size='32px')
 
-    with open(f'{html_path}davisCompTest.html', 'w') as f:
+    with open(f'{html_path}davisLocal.html', 'w') as f:
               f.write(html_table_blue_light)  
             
 createHTMLTables()           
@@ -444,7 +444,7 @@ highPhrase = highData[2]
 lowPhrase = lowData[2]
 rainPhrase = rainData[2]
 
-filePath = '/var/www/html/000/climoDavisTest111.txt'
+filePath = '/var/www/html/000/climoDavisText.txt'
 #filePath = '/Users/jameshayes/Sites/climoDavisText111.txt'
 
 def almanac():
