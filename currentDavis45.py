@@ -100,6 +100,8 @@ med_baro = pres_data[0]
 final_baro = (med_baro['bar_sea_level'])
 final_baro = ("%.2f" % final_baro)
 baro_trend = (med_baro['bar_trend'])
+if baro_trend == None:
+    baro_trend  = 0.0
 c = (b['data'])
 d = c[0]
 
@@ -118,6 +120,7 @@ with open('/home/ec2-user/davisTable.csv', 'w') as outfile:
     rain_rate = (d['rain_rate_hi_in'])
     htindx = int(d['thw_index'])
     time = (d['ts'])
+    print(time)
     date_time = datetime.fromtimestamp(time)
     print(f'{temp},{hum},{wind_direct},{wind_speed},{rainfall},{rain_rate},{htindx},{final_baro},{baro_trend},{time}', 
           file = outfile)      
@@ -133,7 +136,7 @@ time24 = localT.strftime('%-H')
 time24 = int(time24)
 localSet = localT.strftime(('%Y-%m-%d %H:%M'))
     
-with open('/home/ec2-user/davisTableTest.csv', 'a') as outfile1: 
+with open('/home/ec2-user/davisTable.csv', 'a') as outfile1: 
 
     temp = (d['temp'])
     temp = round(temp)
@@ -148,7 +151,7 @@ with open('/home/ec2-user/davisTableTest.csv', 'a') as outfile1:
     htindx = int(d['thw_index'])
     time = (d['ts'])
     date_time = datetime.fromtimestamp(time)
-    print(f'{temp},{dew_point},{hum},{wind_direct},{wind_speed},{rainfall},{rain_rate},{htindx},{final_baro},{baro_trend},{localSet}', 
+    print(f'{temp},{dew_point},{hum},{wind_direct},{wind_speed},{rainfall},{rain_rate},{htindx},{final_baro},{baro_trend},{time}', 
           file = outfile1)      
 
 
@@ -309,6 +312,8 @@ if rain_rate == 0.0:
         f.write(message)
 
 else:
+           
+    
         with open('/var/www/html/000/currentDavisV45.html', 'w') as f:
         #with open('/Users/jameshayes/currentDavis.html', 'w') as f:
 
@@ -370,52 +375,4 @@ else:
             </body>
             </html>'''
             f.write(message)
-
-
-# In[4]:
-
-
-import pandas as pd
-import csv
-import sqlalchemy
-import mysql.connector
-import sqlite3
-import os
-
-colNames1 = ['temp', 'dew_point','hum', 'wind_dir', 'wind_speed', 'rainfall','rain_rate', 'htindx', 'final_baro', 'baro_trend', 'dtg']
-df1 = pd.read_csv('/home/ec2-user/davisTableTest.csv', names = colNames1)
-
-time = (d['ts'])
-timezone = pytz.timezone("America/New_York")
-dt_object = datetime.fromtimestamp(time)
-localT = dt_object.astimezone(timezone)
-lastTime = localT.strftime('%I:%M %p')
-
-df2 = pd.DataFrame(columns = ['timeStamp','temp', 'dew_point','hum', 'wind_dir', 'wind_speed', 'rainfall','rain_rate', 'htindx', 'final_baro', 'baro_trend', 'lastTime'])
-newRow = pd.DataFrame({'timeStamp': time, 'temp': temp, 'dew_point': dew_point, 'hum': hum, 'wind_dir': wind_dir, 'wind_speed': wind_speed, 'rainfall': rainfall, 'rain_rate': rain_rate, 'htindx': htindx, 'final_baro': final_baro, 'baro_trend': baro_trend, 'lastTime': lastTime}, index = [0])
-df2 = pd.concat([newRow, df2[:]]).reset_index(drop = True)
-print("This is the most recent rain_rate", rain_rate)
-
-
-#
-# use environmental variables for the SQL query
-#
-
-db_user = os.environ.get('dbUser')
-db_password = os.environ.get('dbPass')
-
-database_username = db_user
-database_password = db_password
-database_ip       = '3.135.162.69'
-database_name     = 'trweather'
-database_connection = sqlalchemy.create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.
-                                               format(database_username, database_password, 
-                                                      database_ip, database_name))
-df2.to_sql(con=database_connection, name='davisMinute', if_exists='append', index = False) 
-
-
-# In[ ]:
-
-
-
 

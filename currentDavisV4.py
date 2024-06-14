@@ -91,9 +91,13 @@ b = a[1]
 pres = a[3]
 pres_data = (pres['data'])
 med_baro = pres_data[0]
+
 final_baro = (med_baro['bar_sea_level'])
 final_baro = ("%.2f" % final_baro)
 baro_trend = (med_baro['bar_trend'])
+if baro_trend == None:
+    baro_trend  = 0.0
+
 c = (b['data'])
 d = c[0]
 
@@ -236,9 +240,10 @@ loTemp = df['Lo'].astype(int)
 hiTemp =int(hiTemp)
 loTemp =int(loTemp)
 
-if rain_rate == 0.0:
+if rain_rate == 0.0 and htindx > 99:
     
     rain_rate = ""
+    print(rain_rate, htindx, "First Choice")
     with open('/var/www/html/000/currentDavisV4.html', 'w') as f:
     #with open('/Users/jameshayes/currentDavis.html', 'w') as f:
 
@@ -279,8 +284,12 @@ if rain_rate == 0.0:
 
         <div class="dp">
         <li>{dp}&deg;</li>
-        </div>       
-               
+        </div>
+                       
+        <div class="htindx">
+        <li>{htindx}&deg;</li>
+        </div>
+        
         <div class="winds">
         <li>{wind}</li>
         </div>
@@ -301,7 +310,12 @@ if rain_rate == 0.0:
         </html>'''
         f.write(message)
 
-else:
+elif rain_rate == 0.0 and htindx < 100:
+    
+        rain_rate = ""    
+        htindx = ''
+        print(rain_rate, htindx, "Second choice")
+    
         with open('/var/www/html/000/currentDavisV4.html', 'w') as f:
         #with open('/Users/jameshayes/currentDavis.html', 'w') as f:
 
@@ -344,6 +358,14 @@ else:
             <li>{dp}&deg;</li>
             </div>
             
+            <div class="dpH">
+                <a href="http://3.135.162.69/testDP.png">Plot Dew Point</a>
+            </div>
+                                    
+            <div class="htindx">
+            <li>{htindx}</li>
+            </div>
+                    
             <div class="winds">
             <li>{wind}</li>
             </div>
@@ -353,7 +375,153 @@ else:
             </div>
 
             <div class="hrain">
-            <li>{rain_rate}"</li>
+            <li>{rain_rate}</li>
+            </div>
+
+            <div class="totR">
+            <li>{("%.2f" % rainfall)}"</li>
+            </div>
+
+            </body>
+            </html>'''
+            f.write(message)
+            
+
+elif rain_rate != 0.0 and htindx > 99:
+        
+        print(rain_rate, htindx, "Third choice")
+    
+        with open('/var/www/html/000/currentDavisV4.html', 'w') as f:
+        #with open('/Users/jameshayes/currentDavis.html', 'w') as f:
+
+            message = f'''
+            <DOCTYPE html>
+            <html>
+            <link rel="stylesheet" media="screen and (min-width: 900px)" href="forecastP.css" />
+            <link rel="stylesheet" media="screen and (max-width: 600px) " href="forecastSmaller.css" />
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="refresh" content="60";>
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Latest Conditions</title>
+
+            </head>
+            <body>
+
+            <div class="timed"
+            <li> In Toms River, NJ at {lastTime}</li><br><br>
+            </div>
+
+            <div class="temps">
+            <li>{temp}&deg;</li>
+            </div>
+
+            <div class="hiTemp">
+            <li>{hiTemp}&deg;</li>
+            </div>
+
+            <div class="loTemp">
+            <li>{loTemp}&deg;</li>
+            </div>
+
+            <div class="rh">
+            <li>{hum}%</li>
+            </div>
+
+            <div class="dp">
+            <li>{dp}&deg;</li>
+            </div>
+            
+            <div class="htindx">
+            <li>{htindx}&deg;</li>
+            </div>
+                    
+            <div class="winds">
+            <li>{wind}</li>
+            </div>
+
+            <div class="baro">
+            <li>{("%.2f" % final_baro)}{baro_letter}</li>
+            </div>
+
+            <div class="hrain">
+            <li>{("%.2f" % rain_rate)}"</li>
+            </div>
+
+            <div class="totR">
+            <li>{("%.2f" % rainfall)}"</li>
+            </div>
+
+            </body>
+            </html>'''
+            f.write(message)
+
+elif rain_rate != 0.0 and htindx < 100:
+        
+        htindx = ''
+        print(rain_rate, htindx, "Fourth choice")
+    
+        with open('/var/www/html/000/currentDavisV4.html', 'w') as f:
+        #with open('/Users/jameshayes/currentDavis.html', 'w') as f:
+
+            message = f'''
+            <DOCTYPE html>
+            <html>
+            <link rel="stylesheet" media="screen and (min-width: 900px)" href="forecastP.css" />
+            <link rel="stylesheet" media="screen and (max-width: 600px) " href="forecastSmaller.css" />
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="refresh" content="60";>
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Latest Conditions</title>
+
+            </head>
+            <body>
+
+            <div class="timed"
+            <li> In Toms River, NJ at {lastTime}</li><br><br>
+            </div>
+
+            <div class="temps">
+            <li>{temp}&deg;</li>
+            </div>
+
+            <div class="hiTemp">
+            <li>{hiTemp}&deg;</li>
+            </div>
+
+            <div class="loTemp">
+            <li>{loTemp}&deg;</li>
+            </div>
+
+            <div class="rh">
+            <li>{hum}%</li>
+            </div>
+
+            <div class="dp">
+            <li>{dp}&deg;</li>
+            </div>
+            
+            <div class="dpH">
+            <a href="http://3.135.162.69/testDP.png">Plot Dew Point</a>
+            </div>
+            
+            <div class="htindx">
+            <li>{htindx}</li>
+            </div>
+                    
+            <div class="winds">
+            <li>{wind}</li>
+            </div>
+
+            <div class="baro">
+            <li>{("%.2f" % final_baro)}{baro_letter}</li>
+            </div>
+
+            <div class="hrain">
+            <li>{("%.2f" % rain_rate)}"</li>
             </div>
 
             <div class="totR">

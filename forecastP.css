@@ -1,0 +1,483 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    background-color: royalblue;
+    color: black;
+    font-family: sans-serif;
+    font-weight: 300;
+    text-rendering: optimizeLegibility;
+
+}
+
+body {
+    height: 90%;
+
+}
+
+h1 {
+    color: yellow;
+    font-size: 5vw;
+    text-align: center;
+}
+
+h2 {
+    color: black;
+    font-size: 1.5vw;
+    text-align: center;
+}
+
+h3 {
+    font-size: 2.5vw;
+    color: black;
+    text-align: center;
+
+}
+
+h4 {
+    font-size: 1.5wv;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+table {
+    margin: 0 auto;
+}
+
+tr {
+    font-size: 1.5vw;
+    color: blue;
+
+}
+
+td {
+    font-size: 1.5vw;
+    color: black;
+    text-align: center;
+    padding: 5px;
+    font-weight: bold;
+}
+
+th {
+    font-size: 1.5vw;
+    color: black;
+    text-align: center;
+    padding: 7px;
+    font-weight: bold;
+    background-color: lightblue;
+}
+
+p {
+    font-size: 2.0vw;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+
+
+}
+
+a {
+    text-decoration: none;
+    color: darkblue;
+    font-weight: bold;
+
+}
+
+li {
+    list-style-type: none;
+}
+
+.topbox {
+    border: 5px outset darkblue;
+    background-color: yellow;
+    padding: 5px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 3vw;
+    transform: scale(0.45);
+    margin-bottom: 2%;
+    margin: auto;
+    width: 40%;
+}
+
+.nationalCenters {
+    width: 100%;
+    border: 5px outset Black;
+    background-color: lightgoldenrodyellow;
+    color: black;
+    padding: 5px;
+    font-size: 5vw;
+    font-weight: 800;
+    margin-top: 1%;
+    margin-bottom: 2%;
+    text-align: center;
+
+}
+
+.wfo {
+    width: 100%;
+    background-color: lightgoldenrodyellow;
+    border: 5px outset Black;
+    color: black;
+    padding: 5px;
+    font-size: 5vw;
+    font-weight: 800;
+    margin-top: 1%;
+    margin-bottom: 2%;
+    text-align: center;
+
+
+}
+
+.wfo1 {
+    width: 100%;
+    background-color: lightgoldenrodyellow;
+    border: 5px outset Black;
+    color: black;
+    padding: 5px;
+    font-size: 5vw;
+    font-weight: 800;
+    text-align: center;
+    margin-top: 1%;
+    margin-bottom: 2%;
+
+}
+
+.localStuff {
+    width: 100%;
+    background-color: lightgoldenrodyellow;
+    color: black;
+    border: 5px outset Black;
+    padding: 5px;
+    font-size: 5vw;
+    font-weight: 800;
+    margin-top: 1%;
+    text-align: center;
+
+}
+
+.em {
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    color: black;
+    padding: 3px;
+    font-size: 3vw;
+    font-weight: 800;
+    width: 100%;
+    text-align: center;
+
+}
+
+.rightside {
+    width: 100%;
+    height: fit-content;
+    background-color: rgb(2, 2, 2);
+    color: yellow;
+    font-size: 1vw;
+    font-weight: 800;
+    text-align: center;
+
+}
+
+.drillDown {
+    width: 100%;
+    height: auto;
+    border: 5px outset Black;
+    background-color: lightgoldenrodyellow;
+    color: black;
+    padding: 5px;
+    font-size: 6vw;
+    font-weight: 800;
+    text-align: center;
+
+}
+
+.tempImages {
+    width: 100%;
+    height: auto;
+    border: 5px outset Black;
+    background-color: black;
+    color: black;
+    padding: 5px;
+    font-size: 7vw;
+    font-weight: 800;
+    text-align: center;
+}
+
+iframe {
+    height: 100%;
+    width: 100%;
+}
+
+.rainStuff {
+    width: 100%;
+    background-color: lightgoldenrodyellow;
+    color: yellow;
+    border: 5px Black;
+    padding: 5px;
+    font-size: 5vw;
+    font-weight: 800;
+    margin-top: 1%;
+    text-align: center;
+
+}
+
+.testRainStuff {
+    background-color: lightgoldenrodyellow;
+    color: yellow;
+    border: 2px Black;
+    padding: 5px;
+    font-size: 4vw;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.tested {
+    width: 35%;
+    background-color: lightgoldenrodyellow;
+    color: yellow;
+    border: 10px white;
+    padding: 10px;
+    font-size: 5vw;
+    font-weight: 800;
+    text-align: center;
+    margin: auto;
+    margin-top: 1%;
+
+}
+
+.temps {
+    font-size: 10vw;
+    width: 30%;
+    height: 40%;
+    background-color: white;
+    color: crimson;
+    border: 5px darkblue solid;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    margin-left: 1%;
+    text-align: center;
+    line-height: 140%;
+    position: absolute;
+    top: 13%;
+    left: 4%;
+
+}
+
+.rh {
+    font-size: 10vw;
+    width: 30%;
+    height: 40%;
+    background-color: white;
+    color: green;
+    border: 5px darkblue solid;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    margin-left: 1%;
+    text-align: center;
+    line-height: 140%;
+    position: absolute;
+    bottom: 7%;
+    left: 4%;
+
+}
+
+.dp {
+    font-size: 10vw;
+    width: 30%;
+    height: 40%;
+    background-color: white;
+    color: purple;
+    border: 5px darkblue solid;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    margin-left: 1%;
+    text-align: center;
+    line-height: 140%;
+    position: absolute;
+    top: 13%;
+    right: 5%
+}
+
+.dpH {
+    font-size: 4vw;
+    width: 15%;
+    height: 15%;
+    background-color: white;
+    color: tomato;
+    border: 5px darkblue solid;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    margin-left: 1%;
+    text-align: center;
+    line-height: 30%;
+    position: absolute;
+    top: 14%;
+    right: 6%
+}
+
+.winds {
+    font-size: 10vw;
+    width: 30%;
+    height: 40%;
+    background-color: white;
+    color: darkblue;
+    border: 5px darkblue solid;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    text-align: center;
+    line-height: 140%;
+    position: absolute;
+    top: 13%;
+    left: 35%
+}
+
+.baro {
+    font-size: 9vw;
+    width: 30%;
+    height: 40%;
+    background-color: white;
+    color: black;
+    border: 5px darkblue solid;
+    padding: 5px;
+    font-family: Times;
+    font-weight: 800;
+    text-align: center;
+    line-height: 150%;
+    position: absolute;
+    bottom: 7%;
+    left: 35%;
+}
+
+.timed {
+    width: 50%;
+    color: white;
+    background-color: black;
+    font-size: 3vw;
+    font-weight: 800;
+    text-align: center;
+    line-height: 105%;
+    margin: auto;
+    margin-top: 1%;
+    height: 9%;
+    padding: 5px;
+
+}
+
+.totR {
+    font-size: 10vw;
+    width: 30%;
+    height: 30%;
+    background-color: white;
+    color: darkgreen;
+    border: 5px darkblue solid;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    text-align: center;
+    line-height: 140%;
+    position: absolute;
+    bottom: 17%;
+    right: 5%;
+    border-bottom: 0;
+}
+
+.hrain {
+    font-size: 4vw;
+    width: 30%;
+    height: 10%;
+    background-color: white;
+    color: rgb(10, 186, 10);
+    border: 5px darkblue solid;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    text-align: center;
+    line-height: 65%;
+    position: absolute;
+    bottom: 7%;
+    right: 5%;
+    border: 5px darkblue solid;
+    padding: 10px;
+    border-top: 0;
+
+}
+
+.hiTemp {
+    font-size: 4vw;
+    width: 20%;
+    height: 10%;
+    color: red;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    text-align: center;
+    line-height: 100%;
+    position: absolute;
+    top: 43%;
+    left: 5%;
+
+}
+
+.loTemp {
+    font-size: 4vw;
+    width: 20%;
+    height: 10%;
+    color: blue;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    text-align: center;
+    line-height: 100%;
+    position: absolute;
+    top: 43%;
+    left: 16%;
+    padding: 10px;
+
+
+}
+
+.htindx {
+    font-size: 4vw;
+    width: 30%;
+    height: 10%;
+    color: magenta;
+    padding: 10px;
+    font-family: Times;
+    font-weight: 800;
+    text-align: center;
+    line-height: 100%;
+    position: absolute;
+    border-top: 0;
+    top: 43%;
+    right: 5%;
+    padding: 10px;
+
+}
+
+
+.dailyTable {
+    color: black;
+    background-color: white;
+    text-align: center;
+    margin: auto;
+    height: 100vh;
+    width: 100%;
+    padding: 5px;
+    font-size: 3vw;
+
+}
