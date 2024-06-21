@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[5]:
 
 
 import datetime
@@ -12,12 +12,9 @@ import hashlib
 import hmac
 import requests
 import json
-from dateutil.tz import tzutc, tzlocal
-import pytz
-import os
 
 
-# In[ ]:
+# In[6]:
 
 
 parameters = {
@@ -74,7 +71,7 @@ with open(data_dir_file, "w") as fd:
      json.dump(r.json(), fd)
 
 
-# In[ ]:
+# In[7]:
 
 
 #ata_dir_file = '/Users/jameshayes/davis1.json' 
@@ -91,26 +88,11 @@ b = a[1]
 pres = a[3]
 pres_data = (pres['data'])
 med_baro = pres_data[0]
-
 final_baro = (med_baro['bar_sea_level'])
 final_baro = ("%.2f" % final_baro)
 baro_trend = (med_baro['bar_trend'])
-if baro_trend == None:
-    baro_trend  = 0.0
-
 c = (b['data'])
 d = c[0]
-
-'''
-timezone = pytz.timezone("America/New_York")
-recentT = (df['times'].iloc[-1])
-dt_object = datetime.fromtimestamp(recentT)
-localT = dt_object.astimezone(timezone)
-lastTime = localT.strftime('%I:%M %p')  
-time24 = localT.strftime('%-H')  
-time24 = int(time24)
-print(time24)
-'''
 
 #with open('/Users/jameshayes/davisTable.csv', 'w') as outfile: 
 with open('/home/ec2-user/davisTable.csv', 'w') as outfile: 
@@ -129,24 +111,6 @@ with open('/home/ec2-user/davisTable.csv', 'w') as outfile:
     date_time = datetime.fromtimestamp(time)
     print(f'{temp},{hum},{wind_direct},{wind_speed},{rainfall},{rain_rate},{htindx},{final_baro},{baro_trend},{time}', 
           file = outfile)      
-    
-with open('/home/ec2-user/davisTableBig.csv', 'a') as outfile1: 
-
-    temp = (d['temp'])
-    temp = round(temp)
-    dew_point = (d['dew_point'])
-    dew_point = round(dew_point)
-    rainfall = (d['rainfall_daily_in'])
-    hum = (d['hum'])
-    hum = round(hum)
-    wind_direct = (d['wind_dir_scalar_avg_last_1_min'])
-    wind_speed = (d['wind_speed_last'])
-    rain_rate = (d['rain_rate_hi_in'])
-    htindx = int(d['thw_index'])
-    time = (d['ts'])
-    date_time = datetime.fromtimestamp(time)
-    print(f'{temp},{dew_point},{hum},{wind_direct},{wind_speed},{rainfall},{rain_rate},{htindx},{final_baro},{baro_trend},{time}', 
-          file = outfile1)      
 
 
 # In[ ]:
@@ -178,10 +142,10 @@ if wind_direct > 348 and wind_direct <= 360:
 
 wind = f'{wind_dir} {wind_speed}'    
 if wind_speed < 1.5:
-    wind = 'calm'   
+    wind = 'Calm'   
 
 
-# In[ ]:
+# In[4]:
 
 
 from datetime import datetime
@@ -240,11 +204,13 @@ loTemp = df['Lo'].astype(int)
 hiTemp =int(hiTemp)
 loTemp =int(loTemp)
 
+print(rain_rate, htindx)
+
 if rain_rate == 0.0 and htindx > 99:
     
     rain_rate = ""
     print(rain_rate, htindx, "First Choice")
-    with open('/var/www/html/000/currentDavisV4.html', 'w') as f:
+    with open('/var/www/html/000/currentDavisV5.html', 'w') as f:
     #with open('/Users/jameshayes/currentDavis.html', 'w') as f:
 
         message = f'''
@@ -283,10 +249,9 @@ if rain_rate == 0.0 and htindx > 99:
         </div>
 
         <div class="dp">
-        <a href="http://3.135.162.69/testDP.png">Plot</a>
         <li>{dp}&deg;</li>
         </div>
-                       
+        
         <div class="htindx">
         <li>{htindx}&deg;</li>
         </div>
@@ -317,7 +282,7 @@ elif rain_rate == 0.0 and htindx < 100:
         htindx = ''
         print(rain_rate, htindx, "Second choice")
     
-        with open('/var/www/html/000/currentDavisV4.html', 'w') as f:
+        with open('/var/www/html/000/currentDavisV5.html', 'w') as f:
         #with open('/Users/jameshayes/currentDavis.html', 'w') as f:
 
             message = f'''
@@ -359,10 +324,6 @@ elif rain_rate == 0.0 and htindx < 100:
             <li>{dp}&deg;</li>
             </div>
             
-            <div class="dpH">
-                <a href="http://3.135.162.69/testDP.png">Plot</a>
-            </div>
-                                    
             <div class="htindx">
             <li>{htindx}</li>
             </div>
@@ -392,7 +353,7 @@ elif rain_rate != 0.0 and htindx > 99:
         
         print(rain_rate, htindx, "Third choice")
     
-        with open('/var/www/html/000/currentDavisV4.html', 'w') as f:
+        with open('/var/www/html/000/currentDavisV5.html', 'w') as f:
         #with open('/Users/jameshayes/currentDavis.html', 'w') as f:
 
             message = f'''
@@ -463,7 +424,7 @@ elif rain_rate != 0.0 and htindx < 100:
         htindx = ''
         print(rain_rate, htindx, "Fourth choice")
     
-        with open('/var/www/html/000/currentDavisV4.html', 'w') as f:
+        with open('/var/www/html/000/currentDavisV5.html', 'w') as f:
         #with open('/Users/jameshayes/currentDavis.html', 'w') as f:
 
             message = f'''
@@ -505,10 +466,6 @@ elif rain_rate != 0.0 and htindx < 100:
             <li>{dp}&deg;</li>
             </div>
             
-            <div class="dpH">
-            <a href="http://3.135.162.69/testDP.png"></a>
-            </div>
-            
             <div class="htindx">
             <li>{htindx}</li>
             </div>
@@ -532,4 +489,10 @@ elif rain_rate != 0.0 and htindx < 100:
             </body>
             </html>'''
             f.write(message)
+
+
+# In[ ]:
+
+
+
 

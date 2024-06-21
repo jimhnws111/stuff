@@ -312,13 +312,12 @@ iframe {
 }
 
 .dpH {
-    font-size: 4vw;
-    width: 15%;
-    height: 15%;
-    background-color: white;
+    font-size: 1vw;
+    width: 3%;
+    height: 3%;
     color: tomato;
-    border: 5px darkblue solid;
-    padding: 10px;
+    background-color: white;
+    padding: 5px;
     font-family: Times;
     font-weight: 800;
     margin-left: 1%;
@@ -326,7 +325,7 @@ iframe {
     line-height: 30%;
     position: absolute;
     top: 14%;
-    right: 6%
+    right: 31%
 }
 
 .winds {

@@ -23,7 +23,6 @@ file_name = 'skylinefcst.txt'
 full_file = file_path + file_name
 
 urlTest1 = 'https://api.weather.gov/points/40.3422,-76.7151' # here
-urlTest2 = 'https://api.weather.gov/points/39.9752,-74.1298' # home   
 
 r =  requests.get(urlTest1)
 r.encoding = 'utf-8'
@@ -92,6 +91,19 @@ with open(full_file, 'w') as outfile:
         print(f'{dayFcst}', file = outfile)
     
         j+= 1       
+        
+from gtts import gTTS  
+import os
+
+language = 'en'
+
+with open('/var/www/html/000/tomsriverfcst.txt', 'r') as fd1:
+    file2  = fd1.readlines()
+    file2 = ''.join(file2)
+    print(file2)
+    
+myobj = gTTS(text = file2, lang=language, slow=False)
+myobj.save('/var/www/html/000/fcstTR.mp3')        
 
 
 # In[ ]:

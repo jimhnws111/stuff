@@ -68,7 +68,7 @@ conn = mysql.connector.connect(
 
 mycursor = conn.cursor()
 mycursor.execute("USE trweather;")
-pop1 = ("select * from davisMinute WHERE davisMinute.id mod 10 = 0 ORDER BY id DESC LIMIT 40;")
+pop1 = ("select * from davisMinute WHERE davisMinute.id mod 30 = 0 ORDER BY id DESC LIMIT 24;")
          
 mycursor.execute(pop1)
 hours = mycursor.fetchall()
@@ -103,7 +103,7 @@ plt.yticks(fontsize = 12, fontweight = 'bold')
 plt.grid(axis = "y", linewidth = 1.0, color = 'gray')
 plt.grid(axis = "x", linewidth = 1.0, color = 'gray')
 plt.plot(x, dp, marker = "*", color = "red", linewidth = 4, label = "Dew Point")
-plt.title('Dew Point Test', fontsize = 12, fontweight = 'bold')
+plt.title('12 Hour Davis Dew Point', fontsize = 12, fontweight = 'bold')
 plt.savefig(f'{path1}testDP')       
 #plt.show()
 
