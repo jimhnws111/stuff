@@ -58,7 +58,10 @@ database_name     = 'trweather'
 database_connection = sqlalchemy.create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.
                                                format(database_username, database_password, 
                                                       database_ip, database_name))
-df2.to_sql(con=database_connection, name='davisMinute', if_exists='append', index = False)     
+df2.to_sql(con=database_connection, name='davisMinute', if_exists='append', index = False)  
+
+
+
 
 conn = mysql.connector.connect(
   host='3.135.162.69',
@@ -68,7 +71,7 @@ conn = mysql.connector.connect(
 
 mycursor = conn.cursor()
 mycursor.execute("USE trweather;")
-pop1 = ("select * from davisMinute WHERE davisMinute.id mod 30 = 0 ORDER BY id DESC LIMIT 24;")
+pop1 = ("select * from davisMinute WHERE davisMinute.id mod 30 = 0 ORDER BY id DESC LIMIT 25;")
          
 mycursor.execute(pop1)
 hours = mycursor.fetchall()
